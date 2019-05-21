@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require_relative '../lib/slack_mass_uploader'
+
+cli = SlackMassUploader::CLI.new(ARGV)
+emoji = SlackMassUploader::Converter.new(cli.options)
+
+cli.log "CLI Options"
+cli.log "--------------"
+cli.options.each do |option, value|
+  cli.log "#{option}", value
+end
+
+cli.log ""
+cli.log "Converting..."
+cli.log "--------------"
+cli.log "Output Directory", emoji.output_dir
+emoji.convert
+cli.log "Finished converting!"
+
+unless cli.options[:convert_only]
+  cli.log ""
+  cli.log "Uploading now..."
+  cli.log "--------------"
+  uploader = SlackMassUploader::Uploader.new("#{emoji.dir_name}/#{emoji.output_dir}")
+  uploader.upload_emojis
+end
