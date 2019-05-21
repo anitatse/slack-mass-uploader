@@ -11,10 +11,10 @@ module SlackMassUploader
     def parse(args)
       options = {}
       opts = OptionParser.new do |opts|
-        opts.banner = "Usage: slack-mass-uploader [options] FILE"
+        opts.banner = "Usage: slack-mass-uploader [options] DIRECTORY"
         opts.version = SlackMassUploader::VERSION
 
-        opts.on( '-o', '--output-dir=NAME', 'Output directory.' ) do |val|
+        opts.on( '-o', '--output-dir=NAME', 'Output directory name.' ) do |val|
           options[:output_dir] = val
         end
 
@@ -38,8 +38,9 @@ module SlackMassUploader
       file = args.first # ARGV args only - no options
 
       # validates input to be one image file, no gif support (yet)
-      abort "Error: Missing input file" unless file
+      abort "Error: Missing input directory" unless file
       abort "Just specify one file" if args.count > 1
+      abort "Directory does not exist" unless File.directory?(file)
 
       options[:directory] = file
 
